@@ -12,7 +12,8 @@
     "autoload": {
         "psr-4": {
             "Deprecation\\": "src/"
-        }
+        },
+        "files": ["src/DeprecationListener.php"]
     },
     "require": {
         "phpunit/phpunit": "~4.8"
