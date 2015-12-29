@@ -10,7 +10,10 @@
         }
     ],
     "autoload": {
-        "files": ["src/DeprecationErrorHandler.php", "src/DeprecationReporter.php"]
+        "psr-4": {
+            "Deprecation\\": "src/"
+        },
+        "files": ["reporter.php"]
     },
     "require": {
         "phpunit/phpunit": "~4.8"
