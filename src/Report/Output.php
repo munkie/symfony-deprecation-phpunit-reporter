@@ -17,6 +17,8 @@ class Output
             $grouped[$deprecation->getMessage()][(string) $deprecation->getMethod()] = $deprecation;
         }
 
+        echo "\n";
+        
         foreach ($grouped as $message => $deps) {
             echo "\n";
             $depsCount = count($deps);
