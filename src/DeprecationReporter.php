@@ -2,6 +2,7 @@
 
 namespace Deprecation;
 
+use Deprecation\Report\Checkstyle;
 use Exception;
 use PHPUnit_Framework_AssertionFailedError;
 use PHPUnit_Framework_Test;
@@ -74,8 +75,18 @@ class DeprecationReporter extends \PHPUnit_Util_Printer implements \PHPUnit_Fram
 
     public function flush()
     {
-        parent::flush();
+        $this->saveCheckstyleReport();
 
-        $this->handler->getDeprecations();
+        parent::flush();
+    }
+
+    private function saveCheckstyleReport()
+    {
+        $checkstyleFile = getenv('DEPRECATIONS_CHECKSTYLE');
+
+        if ($checkstyleFile) {
+            $checkstyle = new Checkstyle($checkstyleFile);
+            $checkstyle->write($this->handler->getDeprecations());
+        }
     }
 }

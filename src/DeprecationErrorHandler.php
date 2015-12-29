@@ -166,16 +166,13 @@ class DeprecationErrorHandler
 
     /**
      * @param string $group
-     * @param string $msg Deprecation message
+     * @param string $message Deprecation message
      * @param \ReflectionMethod $method
      * @param array $trace
      */
-    private function addDeprecation($group, $msg, array $trace, \ReflectionMethod $method = null)
+    private function addDeprecation($group, $message, array $trace, \ReflectionMethod $method = null)
     {
-        $this->deprecations[$group][$msg][] = array(
-            'method' => $method ? $method->class.'::'.$method->name : null,
-            //'trace' => $trace
-        );
+        $this->deprecations[] = new Deprecation($group, $message, $trace, $method);
     }
 
     /**
