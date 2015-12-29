@@ -1,0 +1,22 @@
+{
+    "name": "munkie/symfony-deprecation-phpunit-reporter",
+    "description": "PHPUnit Symfony deprecations reporter",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Mikhail Shamin",
+            "email": "munk13@gmail.com"
+        }
+    ],
+    "autoload": {
+        "files": ["src/DeprecationErrorHandler.php", "src/DeprecationReporter.php"]
+    },
+    "require": {
+        "phpunit/phpunit": "~4.8"
+    },
+    "require-dev": {
+        "symfony/phpunit-bridge": "@stable"
+    },
+    "minimum-stability": "dev"
+}
