@@ -28,7 +28,7 @@ class Checkstyle
      *
      * @param Deprecation[] $deprecations List of deprecations
      */
-    public function write(array $deprecations)
+    public function report(array $deprecations)
     {
         $this->start();
         foreach ($deprecations as $deprecation) {

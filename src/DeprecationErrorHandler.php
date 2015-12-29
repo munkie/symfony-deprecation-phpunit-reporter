@@ -37,12 +37,7 @@ class DeprecationErrorHandler
      */
     public function __construct()
     {
-        $this->deprecations = array(
-            self::GROUP_UNSILENCED => array(),
-            self::GROUP_REMAINING => array(),
-            self::GROUP_LEGACY => array(),
-            self::GROUP_OTHER => array(),
-        );
+        $this->deprecations = array();
     }
 
     /**
@@ -124,19 +119,20 @@ class DeprecationErrorHandler
     /**
      * @param \ReflectionMethod $method
      *
-     * @return string
+     * @return string Group of deprecation resolved by test method name
      */
     private function getGroup(\ReflectionMethod $method = null)
     {
+        $group = self::GROUP_OTHER;
+
         if (0 !== error_reporting()) {
             $group = self::GROUP_UNSILENCED;
         } elseif (null !== $method && $this->isLegacyTestMethod($method)) {
             $group = self::GROUP_LEGACY;
         } elseif (null !== $method) {
             $group = self::GROUP_REMAINING;
-        } else {
-            $group = self::GROUP_OTHER;
         }
+
         return $group;
     }
 
@@ -160,8 +156,6 @@ class DeprecationErrorHandler
         echo "\nStack trace:";
         echo "\n" . str_replace(' ' . getcwd() . DIRECTORY_SEPARATOR, ' ', $e->getTraceAsString());
         echo "\n";
-
-        exit(1);
     }
 
     /**
@@ -184,51 +178,11 @@ class DeprecationErrorHandler
      */
     private function isLegacyTestMethod(\ReflectionMethod $method)
     {
-        return 0 === strpos($method->getName(), 'testLegacy')
-        || 0 === strpos($method->getName(), 'provideLegacy')
-        || 0 === strpos($method->getName(), 'getLegacy')
-        || strpos($method->getNamespaceName(), '\Legacy')
+        return 0 === strpos($method->name, 'testLegacy')
+        || 0 === strpos($method->name, 'provideLegacy')
+        || 0 === strpos($method->name, 'getLegacy')
+        || strpos($method->class, '\Legacy')
         || in_array('legacy', \PHPUnit_Util_Test::getGroups($method->class, $method->name), true);
-    }
-
-    private function finish($deprecationHandler, $colorize, $deprecations, $mode)
-    {
-        $currErrorHandler = set_error_handler('var_dump');
-        restore_error_handler();
-
-        if ($currErrorHandler !== $deprecationHandler) {
-            echo "\n", $colorize('THE ERROR HANDLER HAS CHANGED!', true), "\n";
-        }
-
-        $cmp = function ($a, $b) {
-            return $b['count'] - $a['count'];
-        };
-
-        foreach (['unsilenced', 'remaining', 'legacy', 'other'] as $group) {
-            if ($deprecations[$group . 'Count']) {
-                echo "\n", $colorize(sprintf('%s deprecation notices (%d)', ucfirst($group), $deprecations[$group . 'Count']), 'legacy' !== $group), "\n";
-
-                uasort($deprecations[$group], $cmp);
-
-                foreach ($deprecations[$group] as $msg => $notices) {
-                    echo "\n", rtrim($msg, '.'), ': ', $notices['count'], "x\n";
-
-                    arsort($notices);
-
-                    foreach ($notices as $method => $count) {
-                        if ('count' !== $method) {
-                            echo '    ', $count, 'x in ', preg_replace('/(.*)\\\\(.*?::.*?)$/', '$2 from $1', $method), "\n";
-                        }
-                    }
-                }
-            }
-        }
-        if (!empty($notices)) {
-            echo "\n";
-        }
-        if (DeprecationErrorHandler::MODE_WEAK !== $mode && $mode < $deprecations['unsilencedCount'] + $deprecations['remainingCount'] + $deprecations['otherCount']) {
-            exit(1);
-        }
     }
 
     /**
