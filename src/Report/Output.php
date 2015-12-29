@@ -25,7 +25,7 @@ class Output
                 echo sprintf("\t%s::%s\n", $dep->getMethod()->class, $dep->getMethod()->name);
             }
             if ($depsCount > 3) {
-                echo sprintf(".. and %d more\n", $depsCount - 3);
+                echo sprintf("\t.. and %d more\n", $depsCount - 3);
             }
         }
     }
