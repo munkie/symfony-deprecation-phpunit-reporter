@@ -173,8 +173,8 @@ class DeprecationErrorHandler
     private function addDeprecation($group, $msg, array $trace, \ReflectionMethod $method = null)
     {
         $this->deprecations[$group][$msg][] = array(
-            'method' => $method ? $method->getName() : null,
-            'trace' => $trace
+            'method' => $method ? $method->class.'::'.$method->name : null,
+            //'trace' => $trace
         );
     }
 
@@ -191,7 +191,7 @@ class DeprecationErrorHandler
         || 0 === strpos($method->getName(), 'provideLegacy')
         || 0 === strpos($method->getName(), 'getLegacy')
         || strpos($method->getNamespaceName(), '\Legacy')
-        || in_array('legacy', \PHPUnit_Util_Test::getGroups($method->getNamespaceName(), $method->getName()), true);
+        || in_array('legacy', \PHPUnit_Util_Test::getGroups($method->class, $method->name), true);
     }
 
     private function finish($deprecationHandler, $colorize, $deprecations, $mode)
