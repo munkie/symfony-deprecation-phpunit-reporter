@@ -12,8 +12,7 @@
     "autoload": {
         "psr-4": {
             "Deprecation\\": "src/"
-        },
-        "files": ["reporter.php"]
+        }
     },
     "require": {
         "phpunit/phpunit": "~4.8"
