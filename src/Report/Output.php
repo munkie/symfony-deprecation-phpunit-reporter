@@ -11,20 +11,29 @@ class Output
      */
     public function report(array $deprecations)
     {
-        /** @var Deprecation[][] $grouped */
         $grouped = array();
         foreach ($deprecations as $deprecation) {
-            $grouped[$deprecation->getMessage()][(string) $deprecation->getMethod()] = $deprecation;
+            $grouped[$deprecation->getMessage()][$deprecation->getMethodFullName()] = $deprecation;
         }
 
+        uasort(
+            $grouped,
+            function ($depsA, $depsB) {
+                return count($depsB) - count($depsA);
+            }
+        );
+
+        $index = 1;
+
         echo "\n";
-        
-        foreach ($grouped as $message => $deps) {
+
+        foreach ($grouped as $message => $depres) {
             echo "\n";
-            $depsCount = count($deps);
-            echo sprintf("%s %dx:\n", $message, $depsCount);
-            foreach (array_slice($deps, 0, 3) as $dep) {
-                echo sprintf("\t%s::%s\n", $dep->getMethod()->class, $dep->getMethod()->name);
+            $depsCount = count($depres);
+            echo sprintf("%d) %dx %s:\n", $index++, $depsCount, $message);
+            /** @var Deprecation $dep */
+            foreach (array_slice($depres, 0, 3) as $dep) {
+                echo sprintf("\t%s\n", $dep->getMethodFullName());
             }
             if ($depsCount > 3) {
                 echo sprintf("\t.. and %d more\n", $depsCount - 3);

@@ -73,6 +73,16 @@ class Deprecation
     }
 
     /**
+     * Get class and method name
+     *
+     * @return string
+     */
+    public function getMethodFullName()
+    {
+        return sprintf('%s::%s', $this->method->class, $this->method->name);
+    }
+
+    /**
      * @return array
      */
     public function getTrace()
