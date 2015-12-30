@@ -54,7 +54,7 @@ class DeprecationErrorHandler
         }
 
         $handler = new self();
-        $oldErrorHandler = set_error_handler(array($handler, 'handle'));
+        $oldErrorHandler = set_error_handler(array($handler, 'handle'), E_USER_DEPRECATED);
 
         if (null !== $oldErrorHandler) {
             restore_error_handler();
@@ -81,8 +81,8 @@ class DeprecationErrorHandler
     public function handle($type, $msg, $file, $line, $context)
     {
         if (E_USER_DEPRECATED !== $type) {
-            //return false; ?
-            return \PHPUnit_Util_ErrorHandler::handleError($type, $msg, $file, $line, $context);
+            return false;
+            //return \PHPUnit_Util_ErrorHandler::handleError($type, $msg, $file, $line, $context);
         }
 
         $debugOptions = PHP_VERSION_ID >= 50400 ? DEBUG_BACKTRACE_IGNORE_ARGS | DEBUG_BACKTRACE_PROVIDE_OBJECT : true;
